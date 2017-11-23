@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+
+<title>查找歌曲</title>
+<style type="text/css">
+</style>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$('input[name=musicName]').keypress(function(evt){
+		if(evt.keyCode != 13)	{
+			return false;
+		}
+		var search_name = $(this).val();
+		/**/
+		$.ajax({
+			url:"http://s.music.163.com/search/get/",
+			type:'get',
+			dataType:'jsonp',
+			data:{type:'1', s:search_name, limit:$('input[name=sNum]').val(), offset:'0'},
+			success:function(jsondata){
+				var songs = jsondata.result.songs;
+				$('#song_list').empty().append("<legend>搜索结果列表</legend>");
+				
+				for(i = 0; i < jsondata.result.songs.length; i++)	{
+					var listItem = "<div><div style='float:left'><img src='" + 	songs[i].album.picUrl;
+					listItem += "' style='width:72px;height:72px;margin-right:12px;'></div>" 
+					listItem += "<div>歌曲名：" + songs[i].name;
+					listItem += "<br>";
+					listItem += "演唱者：" + songs[i].artists[0].name + "<br>";
+					listItem += "专辑名：" + songs[i].album.name + "<br>";
+					//listItem += "歌曲地址:" + songs[i].audio;
+					listItem += "歌曲地址:&nbsp; http://music.163.com/song/media/outer/url?id=" + songs[i].id + ".mp3<br>";
+					//listItem += "&#x3000;<embed style='margin:5px;width:200px;height:50px;float:left;' type='application/x-shockwave-flash'  src='http://www.51119.com/play/swf/2.swf' flashvars='file=" + songs[i].audio + "&width=200&songVolume=100&backColor=E8E8E8&frontColor=000000&autoStart=false&repeatPlay=false&showDownload=false'  allowscriptaccess='never' quality='high' wmode='transparent'></embed></div></div><br><br style='clear:both;'>";
+					listItem += "&#x3000;<embed style='margin:5px;width:200px;height:50px;float:left;' src='http://www.51119.com/play/swf/2.swf' flashvars='file=http://music.163.com/song/media/outer/url?id=" + songs[i].id + ".mp3&width=200&songVolume=100&backColor=E8E8E8&frontColor=000000&autoStart=false&repeatPlay=false&showDownload=false'  allowscriptaccess='never' quality='high' wmode='transparent'></embed></div></div><br><br style='clear:both;'>";
+					if((songs[i].name).indexOf(search_name) >= 0 ||
+						(songs[i].album.name).indexOf(search_name) >=0 ||
+						(songs[i].artists[0].name).indexOf(search_name) >= 0)	{
+						$('#song_list').append(listItem);
+					}
+				}
+				
+			}
+		});
+		
+	});
+});
+</script>
+</head>
+
+<body>
+<div style="width:800px;padding:16px;border-radius:24px;
+background-image:url(http://img4.oldkids.cn/upload/260805000/u260804222/2014/05/07/blog_20140507211225985840.gif);">
+<span style="color:#800;font: bold 1.1em 隶书;">查找的歌曲名 / 演唱者 ： </span>
+<input name="musicName" size='80' alt="按回车键开始搜索"> 
+<!--	http://fwlflv.qiniudn.com/o_1anq19mvo1dn51piv7flhbknk3a.htm -->
+<div style="display:none;">
+最多 <input name='sNum' size='4' value='32' style="text-align:right;"> 首 </div>
+<fieldset id='song_list' style="padding:12px;margin-top:16px; margin-bottom:24px;">
+<legend style="color:blue; margin: 8px auto;font:bold 1em 宋体;">&nbsp;搜&nbsp;索&nbsp;结&nbsp;果&nbsp;列&nbsp;表&nbsp;</legend>
+</fieldset>
+</div>
+</body>
+</html>
